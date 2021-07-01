@@ -1,2 +1,2 @@
 # battleship
-Implementation of battleship board game using memetic algorithms
+An implementation of battleship board game using memetic algorithms
