@@ -1,2 +1,2 @@
 # battleship
-Memetic Algorithms for Search Hueristic Optimization in the Board Game Battleship
+Memetic Algorithms for Search Heuristic Optimization of the Board Game Battleship
