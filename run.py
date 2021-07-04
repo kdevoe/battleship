@@ -5,6 +5,7 @@
 
 from board import Board
 from agent import Agent
+from random import randint
 
 # Make a shipList
 shipList = [(5, "Ca"), (4, "Ba"), (3, "Cr"), (3, "Su"), (2, "De")]
@@ -18,4 +19,14 @@ if __name__ == '__main__':
 
     agent1 = Agent(board)
     print(agent1.check_done())
+
+    for _ in range(100):
+        while not agent1.check_done():
+            row = randint(0, 9)
+            col = randint(0, 9)
+            if (row, col) not in agent1.get_guessed():
+                agent1.guess(row, col)
+        print(agent1.get_count())
+        board.reset()
+        agent1.reset()
 

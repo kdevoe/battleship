@@ -59,6 +59,17 @@ class Board:
                     for i in range(ship[0]):
                         self._board[row + row_dir * i][col + col_dir * i] = ship[1]
 
+    def reset(self):
+
+        # Wipe the board
+        for i in range(self._size):
+            for j in range(self._size):
+                self._board[i][j] = False
+
+        # Place ships again
+        self.place_ships()
+
+
     def get_list(self):
         return self._shipList
 
