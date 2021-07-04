@@ -4,6 +4,7 @@
 
 from random import sample, randint, choice
 
+
 class Board:
     """
     Represents a battleship board. Defaults to a 10 x 10 board size unless input otherwise.
@@ -15,13 +16,13 @@ class Board:
 
         # Make a 2D board of input size initializing all values to false for empty
         self._board = []
-        for row in size:
+        for row in range(size):
             self._board.append([])
-            for col in size:
+            for col in range(size):
                 self._board[row].append(False)
 
     def place_ships(self):
-        ship_order = sample(self._shipList)
+        ship_order = sample(self._shipList, len(self._shipList))
 
         for ship in ship_order:
             valid = False
@@ -38,26 +39,34 @@ class Board:
                     col_dir = choice([-1, 1])
 
                 # Check if ship would fit on the board
-                for i in ship[0]:
+                i = 0
+                while valid and i < ship[0]:
                     if row + row_dir*i < 0 or row + row_dir*i >= self._size:
                         valid = False
                     if col + col_dir*i < 0 or col + col_dir*i >= self._size:
                         valid = False
+                    i += 1
 
                 # Check if target location is open
                 i = 0
                 while valid and i < ship[0]:
-                    if row + row_dir * i :
-                            valid = False
-                        if col + col_dir * i < 0 or col + col_dir * i >= self._size:
-                            valid = False
+                    if self._board[row + row_dir * i][col + col_dir * i] != False:
+                        valid = False
                     i += 1
 
-        pass
+                # Place the ship if chosen location and orientation is valid
+                if valid:
+                    for i in range(ship[0]):
+                        self._board[row + row_dir * i][col + col_dir * i] = ship[1]
+
+    def get_list(self):
+        return self._shipList
 
     def get_square(self, row, col):
         return self._board[row][col]
 
+    def get_size(self):
+        return self._size
 
     def print_board(self):
         for row in self._board:
