@@ -7,7 +7,7 @@ from board import Board
 from agent import Agent
 from random import randint
 
-# Make a shipList
+# Make a shipList (this can be updated per run)
 shipList = [(5, "Ca"), (4, "Ba"), (3, "Cr"), (3, "Su"), (2, "De")]
 
 
