@@ -20,6 +20,7 @@ class Board:
             self._board.append([])
             for col in range(size):
                 self._board[row].append(False)
+        self.place_ships()
 
     def place_ships(self):
         ship_order = sample(self._shipList, len(self._shipList))
