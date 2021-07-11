@@ -117,7 +117,6 @@ class Agent:
         # Wipe the probability board
         self.wipe_board(self._probBoard, "O")
 
-    ################ Work here next #############################
     def update_prob(self):
         """
         Updates the probability board given the information in the known board.
