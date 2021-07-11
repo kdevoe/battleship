@@ -14,7 +14,7 @@ class Board:
         self._shipList = shipList
         self._size = size
 
-        # Make a 2D board of input size initializing all values to false for empty
+        # Make a 2D board of input size initializing all values to False for open
         self._board = []
         for row in range(size):
             self._board.append([])

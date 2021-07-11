@@ -19,6 +19,7 @@ class Agent:
         self._size = board.get_size()
         self._guessed = []
         self._count = 0
+        self._code = {'O': 0, 'M': 1, "Ca": 2, "Ba": 2, "Cr": 2, "Su": 3, "De": 2, 'S': 3}
         if genes is None:
             self._genes = [1] * 16      # If no values are passed set all genes to 1
         else:
@@ -74,10 +75,13 @@ class Agent:
         self._count += 1
         self._guessed.append((row, col))
         current = self._board.get_square(row, col)
-        self._knownBoard[row][col] = current
+        if current == False:
+            self._knownBoard[row][col] = 'M'
+        else:
+            self._knownBoard[row][col] = current
         if current in self._shipStatus:
             self.hit_ship(current, row, col)
-
+        self.update_prob()
         return self._board.get_square(row, col)
 
     def rand_guess(self):
@@ -93,6 +97,10 @@ class Agent:
             col = randint(0, self._size - 1)
 
         return self.guess(row, col)
+
+    def prob_guess(self):
+        # TODO: Make this select the highest probability location as the next guess
+        pass
 
     def reset(self):
         self._count = 0
@@ -111,8 +119,35 @@ class Agent:
 
     ################ Work here next #############################
     def update_prob(self):
+        """
+        Updates the probability board given the information in the known board.
+        Note: This is the most expensive part of the program, operating in O(N^3) time.
+        :return:
+        """
         self.wipe_board(self._probBoard, 0)
-        pass
+
+        # Array for movement (Up, Up Right, Right, Down Right, Down, Down Left, Left, Up Left)
+        dir_array = [(-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1)]
+
+        for cur_row in range(self._size):
+            for cur_col in range(self._size):
+                cur_val = self._code[self._knownBoard[cur_row][cur_col]]
+                for dir in range(8):
+                    sel_row = cur_row + dir_array[dir][0]
+                    sel_col = cur_col + dir_array[dir][1]
+
+                    horzVert = (dir % 2)
+                    initial = self._genes[cur_val*4 + horzVert*2]
+                    fade = self._genes[cur_val*4 + horzVert*2 + 1]
+                    distance = 1
+                    # Check that the position being updated is still on the board
+                    while (0 <= sel_row < self._size) and (0 <= sel_col < self._size):
+
+                        self._probBoard[sel_row][sel_col] += self.calc_fade(distance, initial, fade)
+
+                        distance += 1
+                        sel_row += dir_array[dir][0]
+                        sel_col += dir_array[dir][1]
 
     def wipe_board(self, board, value):
         # Guard for if board is empty, will do nothing
@@ -132,6 +167,10 @@ class Agent:
 
     def print_kboard(self):
         for row in self._knownBoard:
+            print(row)
+
+    def print_pboard(self):
+        for row in self._probBoard:
             print(row)
 
     def get_genes(self):
