@@ -67,7 +67,7 @@ class Agent:
 
     def guess(self, row, col):
         """
-        Make a guess on the game board for a position.
+        Make a guess on the game board for a position. Assumes the input row and column are valid open spaces.
         :param row: Row of guess
         :param col: Column of guess
         :return: Value of the board at the guess location
@@ -82,7 +82,7 @@ class Agent:
         if current in self._shipStatus:
             self.hit_ship(current, row, col)
         self.update_prob()
-        return self._board.get_square(row, col)
+        return self._knownBoard[row][col]
 
     def rand_guess(self):
         """
@@ -100,7 +100,16 @@ class Agent:
 
     def prob_guess(self):
         # TODO: Make this select the highest probability location as the next guess
-        pass
+        # Note: This function has not been tested
+
+        prob_list = []
+        for row in range(self._size):
+            for col in range(self._size):
+                prob_list.append((self._probBoard[row][col], row, col))
+
+        prob_list.sort(reverse=True)
+
+        return self.guess(prob_list[0][1], prob_list[0][2])
 
     def reset(self):
         self._count = 0

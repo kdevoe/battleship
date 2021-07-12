@@ -16,6 +16,7 @@ if __name__ == '__main__':
     board = Board(shipList, 10)
 
     agent1 = Agent(board)
+    print(agent1.prob_guess())
 
     for _ in range(1):
         while not agent1.check_done():
