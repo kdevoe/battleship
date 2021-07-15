@@ -5,6 +5,7 @@
 
 from board import Board
 from agent import Agent
+from test import Test
 from random import randint, seed
 
 # Make a shipList (this can be updated per run)
@@ -16,14 +17,8 @@ if __name__ == '__main__':
     board = Board(shipList, 10)
 
     agent1 = Agent(board)
-    print(agent1.prob_guess())
 
-    for _ in range(1):
-        while not agent1.check_done():
-            agent1.rand_guess()
-            agent1.print_pboard()
-            print()
-        print(agent1.get_count())
-        board.reset()
-        agent1.reset()
+    test = Test(agent1, board)
 
+    print(test.rand_genes(-10, 10))
+    print(test.run(1, 1))

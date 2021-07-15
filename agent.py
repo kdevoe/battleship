@@ -99,7 +99,6 @@ class Agent:
         return self.guess(row, col)
 
     def prob_guess(self):
-        # TODO: Make this select the highest probability location as the next guess
         # Note: This function has not been tested
 
         prob_list = []
@@ -109,9 +108,16 @@ class Agent:
 
         prob_list.sort(reverse=True)
 
-        return self.guess(prob_list[0][1], prob_list[0][2])
+        # Iterate through the probability list until an location that hasn't been guessed is selected
+        cur = 0
+        while (prob_list[cur][1], prob_list[cur][2]) in self._guessed:
+            cur += 1
+
+        return self.guess(prob_list[cur][1], prob_list[cur][2])
 
     def reset(self):
+
+        # Reset the total guess count and locations guessed
         self._count = 0
         self._guessed = []
 
@@ -169,10 +175,6 @@ class Agent:
     def calc_fade(self, distance, initial, fade):
         return initial * (1 / distance**(fade/10))
 
-    def update_genes(self, genes):
-        for i in len(genes):
-            self._genes[i] = genes[i]
-
     def print_kboard(self):
         for row in self._knownBoard:
             print(row)
@@ -181,8 +183,14 @@ class Agent:
         for row in self._probBoard:
             print(row)
 
+    def set_genes(self, genes):
+        self._genes = genes.copy()
+
     def get_genes(self):
         return self._genes
+
+    def get_glength(self):
+        return len(self._genes)
 
     def get_count(self):
         return self._count
