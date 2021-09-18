@@ -3,14 +3,24 @@
 # Description: Class that represents the game board of battleship.
 
 from random import sample, randint, choice
+from copy import deepcopy
 
 
 class Board:
     """
-    Represents a battleship board. Defaults to a 10 x 10 board size unless input otherwise.
+    Represents a battleship board. Defaults to a 10 x 10 board size unless input otherwise. Class that takes in a list
+    of ships to place and size of a board and builds a battleship board. Primary function is place_ships which randomly
+    places the ships on the board. Other functions are basic get / set functions for either updating the board or
+    looking up specific cell values.
     """
 
     def __init__(self, shipList, size=10):
+        """
+        Initializes a battlehip board based on input shipList and desired size.
+        :param shipList: List of battleships to place. List is a tuple of integer value for length of ship followed by
+                the string to represent the ship with i.e. (5, "Ba") Represents a length 5 "Ba" ship.
+        :param size: Size of the board n x n. Defaults to 10 x 10.
+        """
         self._shipList = shipList
         self._size = size
 
@@ -70,12 +80,18 @@ class Board:
         # Place ships again
         self.place_ships()
 
+    def set_board(self, new_Board):
+        self._board = deepcopy(new_Board)
 
     def get_list(self):
         return self._shipList
 
     def get_square(self, row, col):
         return self._board[row][col]
+
+    #TODO: Work on this bit here
+    def get_board(self):
+        return deepcopy(self._board)
 
     def get_size(self):
         return self._size

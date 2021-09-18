@@ -19,11 +19,12 @@ class Agent:
         self._size = board.get_size()
         self._guessed = []
         self._count = 0
+        ################## Need to look at self._code more #############################
         self._code = {'O': 0, 'M': 1, "Ca": 2, "Ba": 2, "Cr": 2, "Su": 3, "De": 2, 'S': 3}
         if genes is None:
             self._genes = [1] * 16      # If no values are passed set all genes to 1
         else:
-            self._genes = genes
+            self._genes = genes.copy()
 
         # Make an array to hold the status of each ship being searched for
         self._shipStatus = {}
@@ -173,7 +174,7 @@ class Agent:
                 board[i][j] = value
 
     def calc_fade(self, distance, initial, fade):
-        return initial * (1 / distance**(fade/10))
+        return initial * (1 / distance**(fade/5))
 
     def print_kboard(self):
         for row in self._knownBoard:
@@ -181,7 +182,7 @@ class Agent:
 
     def print_pboard(self):
         for row in self._probBoard:
-            print(row)
+            print([round(x) for x in row])
 
     def set_genes(self, genes):
         self._genes = genes.copy()
