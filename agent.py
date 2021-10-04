@@ -1,27 +1,32 @@
 # Author: Ken DeVoe
 # Date: 7/4/2021
-# Description: Class for agent to play the game battleship.
+# Description: Class for agent to play the game battleship. Utilizes a has-a relationship with the Board class.
 
 from random import randint, seed
 
 class Agent:
     """
-    Represents an agent which plays the game of battleship
+    Represents an agent which plays the game of battleship.
     """
 
     def __init__(self, board, genes=None):
         """
 
         :param board: Board object to be the environment in which the agent acts.
-        :param genes: An array of integers of length 16. #### Fill in more here.
+        :param genes: An array of integers of length 16. (See attached paper for description of genetic sequence) Takes
+                        the form of a list of integers, one for each marker. Initializes to all 1 if not passed in.
         """
         self._board = board
         self._size = board.get_size()
-        self._guessed = []
-        self._count = 0
+        self._guessed = []  # Locations that have already been guessed by the agent
+        self._count = 0  # Number of guesses made by the agent
+        # Dictionary of cell character to value pairs. Open, hit, miss and sunk all take different values. All ships
+        # default to the same value of 2 representing hit.
         self._code = {'O': 0, 'M': 1, "Ca": 2, "Ba": 2, "Cr": 2, "Su": 3, "De": 2, 'S': 3}
+
+        # If no genes are passed in set to all 1, otherwise use values passed in
         if genes is None:
-            self._genes = [1] * 16      # If no values are passed set all genes to 1
+            self._genes = [1] * 16
         else:
             self._genes = genes.copy()
 
@@ -30,7 +35,7 @@ class Agent:
         for ship in board.get_list():
             self._shipStatus[ship[1]] = [False, ship[0], []]
 
-        # Make a probability board initialized to 0
+        # Make a probability board initialized to all 0
         self._probBoard = []
         for row in range(board.get_size()):
             self._probBoard.append([])
@@ -49,6 +54,7 @@ class Agent:
         Checks if the agent has located all the ships and if the game is complete.
         :return: True or False for if game is complete or not.
         """
+        # Default to done for the game. If one ship still is not sunk then will return not done.
         done = True
         for ship in self._shipStatus:
             if not self._shipStatus[ship][0]:
@@ -56,9 +62,21 @@ class Agent:
         return done
 
     def hit_ship(self, ship_name, row, col):
+        """
+        Handles the case where a guess hits a ship. Will update that ships status as to how many hits it has and
+        whether it is sunk or not.
+        :param ship_name: Character representing ship type.
+        :param row: Row hit is at.
+        :param col: Column hit is at.
+        :return: T/F boolean for if ship has been sunk or not.
+        """
         sunk = False
+
+        # Add the hit location to the ships list of hits.
         ship = self._shipStatus[ship_name]
         ship[2].append((row, col))
+
+        # If the number of hits equals the length of the ship set it as sunk.
         if ship[1] <= len(ship[2]):
             ship[0] = True
             sunk = True
@@ -72,11 +90,15 @@ class Agent:
         :param col: Column of guess
         :return: Value of the board at the guess location
         """
-        self._count += 1
-        self._guessed.append((row, col))
-        current = self._board.get_square(row, col)
+        self._count += 1  # Increment the counter for guesses made by the agent
+        self._guessed.append((row, col))  # Add guessed cell to locations guessed by agent
+        current = self._board.get_square(row, col)  # Get the value at the guessed cell
+
+        # Case for a miss
         if current == False:
             self._knownBoard[row][col] = 'M'
+
+        # Case for a hit
         else:
             self._knownBoard[row][col] = current
         if current in self._shipStatus:

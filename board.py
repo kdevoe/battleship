@@ -1,9 +1,11 @@
 # Author: Ken DeVoe
-# Date: 7/2/2021
-# Description: Class that represents the game board of battleship.
+# Date: 10/2/2021
+# Description: Representation of a battleship board game. Facilitates placement of ships on the board as well as
+#               providing basic queries for the status of each cell. Both the board size and list of ships to place
+#               are adjustable.
 
-from random import sample, randint, choice
-from copy import deepcopy
+from random import sample, randint, choice  # For random ship placement
+from copy import deepcopy  # Used in manually setting a board to a saved configuration (set_board)
 
 
 class Board:
@@ -24,7 +26,7 @@ class Board:
         self._shipList = shipList
         self._size = size
 
-        # Make a 2D board of input size initializing all values to False for open
+        # Make a 2D board of nxn input size then place ships on the board
         self._board = []
         for row in range(size):
             self._board.append([])
@@ -33,9 +35,19 @@ class Board:
         self.place_ships()
 
     def place_ships(self):
+        """
+        Facilitates the placement of ships stored in self._shipList on the board. Ships are randomly placed both in
+        location and direction.
+        :return: No return value. self._board is updated with added ship locations.
+        """
+
+        # Make a random list of provided ships.
         ship_order = sample(self._shipList, len(self._shipList))
 
+        # Place each ship provided in the list
         for ship in ship_order:
+            # Make an attempt to place the ship in a random location. Choose new location until a valid one to place
+            # the ship is found
             valid = False
             while not valid:
                 valid = True
@@ -71,6 +83,10 @@ class Board:
                         self._board[row + row_dir * i][col + col_dir * i] = ship[1]
 
     def reset(self):
+        """
+        Wipes the board and places the ships randomly again. Used often to start a new battleship game.
+        :return: self._board is updated
+        """
 
         # Wipe the board
         for i in range(self._size):
@@ -80,6 +96,7 @@ class Board:
         # Place ships again
         self.place_ships()
 
+    # Basic get and set functions for accessing board information. Used primarily by Agent class.
     def set_board(self, new_Board):
         self._board = deepcopy(new_Board)
 
@@ -89,7 +106,6 @@ class Board:
     def get_square(self, row, col):
         return self._board[row][col]
 
-    #TODO: Work on this bit here
     def get_board(self):
         return deepcopy(self._board)
 
