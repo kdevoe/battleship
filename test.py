@@ -7,10 +7,12 @@ from random import seed, randint
 import json
 import numpy as np
 import os
+import csv
 
 class Test:
     """
-    Facilitates testing and analysis of an agents performance against a board.
+    Facilitates testing and analysis of an agents performance against battleship boards. Also contains functions for
+    mutating as well as cross-over of gene sequences that determine agents play style.
     """
 
     def __init__(self, agent, board):
@@ -42,6 +44,7 @@ class Test:
                 with open(filename, 'w') as outfile:
                     json.dump([], outfile)
 
+        # Make a new file if save file does not yet exist
         except FileNotFoundError:
             with open(filename, 'w') as outfile:
                 json.dump([], outfile)
@@ -57,6 +60,11 @@ class Test:
 
 
     def rand_boards(self, qty=100):
+        """
+        Generates game boards randomly populated with ships.
+        :param qty: Number of boards to generate
+        :return: List of random game boards
+        """
 
         boards = []
         for _ in range(qty):
@@ -71,21 +79,19 @@ class Test:
         Makes a random set of genes as integers and assigns to the agent.
         :param min: Minimum value for random gene.
         :param max: Maximum value for random gene.
-        :return: Set of genes created.
+        :return: List as a random genetic sequence.
         """
         seed()
         genes = [randint(min, max) for _ in range(self._gLength)]
         self._agent.set_genes(genes)
         return genes
 
-
-    def mutate(self, min, max, change=2):
+    def mutate(self, mini, maxi, change=2):
         """
-
-        :param genes:
-        :param min:
-        :param max:
-        :return:
+        Performs mutations on a gene sequence by modifying a random marker by plus or minus the given change amount.
+        :param mini: Lower limit of a gene marker value.
+        :param maxi: Upper limit of a gene marker value.
+        :return: Modified gene sequence
         """
         genes = self._agent.get_genes()
 
@@ -99,31 +105,39 @@ class Test:
             change *= -1
 
         # Attempt to modify the gene, if modification puts values outsize max or min
-        # then reverses the direction and cuts modification amount in half
+        # then reverses the direction and cut the modification amount in half (to ensure modification is possible)
         modified = False
-
         while not modified:
             new_gene = genes[gene] + change
-            if min <= new_gene <= max:
+            if mini <= new_gene <= maxi:
                 genes[gene] = new_gene
                 modified = True
             else:
                 change *= -1
-                # change = change // 2
-
-        #### Taking out the option to automatically update genes for now
-        #self._agent.set_genes(genes)
+                change = change // 2
 
         return genes
 
-    def mutations(self, boards, min, max, change=2, trials=50):
+    def mutate_generations(self, boards, mini, maxi, change=2, generations=50):
+        """
+        Runs the mutate function over a set of genes for the given number of generations. Mutations that improve the
+        performance are kept over time.
+        :param boards: Set of boards to test against.
+        :param mini: Lower limit for gene marker value.
+        :param maxi: Upper limit for gene marker value.
+        :param change: Size of modification to markers on each mutation. Defaults to 2.
+        :param generations: Number of generations to mutate the gene sequence. Defaults to 50.
+        :return: Best result as number of guesses to win after mutations completed. Also self._gene variable gets
+                updated to the best performing genes.
+        """
+
 
         best_result = self.run_set(boards)
         current = best_result[0][0]
 
-        for _ in range(trials):
+        for _ in range(generations):
             genes = self._agent.get_genes()
-            new_genes = self.mutate(min, max, change)
+            new_genes = self.mutate(mini, maxi, change)
             run_result = self.run_set(boards, None, new_genes)
             new_count = run_result[0][0]
 
@@ -131,8 +145,6 @@ class Test:
             if new_count <= current:
                 current = new_count
                 best_result = run_result
-                # Commenting out line for reporting intermediate results
-                #print(_, best_result)
 
             # If new_genes are not better than set genes back to the original set
             else:
@@ -238,15 +250,38 @@ class Test:
 
         return new_list
 
-    def do_cross(self, boards, infile, outfile, select=8):
+    def diversity(self, gene_set, mini, maxi):
+        """
+        Calculates the diversity of a given set of gene sequences.
+
+        :param gene_set:
+        :param mini:
+        :param maxi:
+        :return:
+        """
+
+        length = len(gene_set[0])
+
+        # First calculate the average genetic sequence of the set
+        stdev_gene = [0] * length
+
+        for i in range(length):
+            stdev_gene[i] = np.std([x[i] for x in gene_set])
+
+        # Calculate the average diversity for the given gene set
+
+        return (np.mean(stdev_gene) / (maxi - mini)) * 2
+
+    def do_cross(self, boards, infile, outfile, select=8, divisions=4):
         best = self.get_file(infile)
         best.sort()
 
-        seed_genes = []
-        for i in range(select):
-            seed_genes.append(best[i][2])
+        seed_genes = best[0:select]
+        # Temporary mod for test
+        #for i in range(select):
+        #    seed_genes.append(best[i][2])
 
-        new_genes = self.cross_genes(seed_genes)
+        new_genes = self.cross_genes(seed_genes, divisions)
 
         new_set = []
         for i in range(len(new_genes)):
@@ -268,7 +303,7 @@ class Test:
         new_set = []
         for i in range(select):
             self._agent.set_genes(best[i][2])
-            current = self.mutations(boards, min, max)
+            current = self.mutate_generations(boards, min, max)
             new_set.append(current)
 
             print(i, current)
@@ -280,10 +315,14 @@ class Test:
         if new_set is not None:
             self.append_file(new_set, outfile)
 
-
-
     def stats(self, values):
         return [np.mean(values).item(), np.std(values).item(), np.min(values).item(), np.max(values).item()]
+
+    def write_csv(self, data, outfile):
+        with open(outfile, 'w', encoding='UTF8') as file:
+            writer = csv.writer(file)
+            for line in data:
+                writer.writerow(line)
 
     def try_rand_genes(self):
     # TODO: Build function for running random genes

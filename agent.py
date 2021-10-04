@@ -19,7 +19,6 @@ class Agent:
         self._size = board.get_size()
         self._guessed = []
         self._count = 0
-        ################## Need to look at self._code more #############################
         self._code = {'O': 0, 'M': 1, "Ca": 2, "Ba": 2, "Cr": 2, "Su": 3, "De": 2, 'S': 3}
         if genes is None:
             self._genes = [1] * 16      # If no values are passed set all genes to 1
@@ -100,7 +99,6 @@ class Agent:
         return self.guess(row, col)
 
     def prob_guess(self):
-        # Note: This function has not been tested
 
         prob_list = []
         for row in range(self._size):
