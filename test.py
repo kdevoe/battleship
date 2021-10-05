@@ -20,11 +20,11 @@ class Test:
         self._agent = agent
         self._gLength = self._agent.get_glength()
 
-    def write_file(self, item, filename):
+    def write_json(self, item, filename):
         with open(filename, 'w') as outfile:
             json.dump(item, outfile)
 
-    def get_file(self, filename):
+    def get_json(self, filename):
         with open(filename, 'r') as infile:
             item = json.load(infile)
 
@@ -73,16 +73,15 @@ class Test:
 
         return boards
 
-
-    def rand_genes(self, min, max):
+    def rand_genes(self, mini=-10, maxi=10):
         """
         Makes a random set of genes as integers and assigns to the agent.
-        :param min: Minimum value for random gene.
-        :param max: Maximum value for random gene.
+        :param mini: Minimum value for random gene.
+        :param maxi: Maximum value for random gene.
         :return: List as a random genetic sequence.
         """
         seed()
-        genes = [randint(min, max) for _ in range(self._gLength)]
+        genes = [randint(mini, maxi) for _ in range(self._gLength)]
         self._agent.set_genes(genes)
         return genes
 
@@ -131,7 +130,6 @@ class Test:
                 updated to the best performing genes.
         """
 
-
         best_result = self.run_set(boards)
         current = best_result[0][0]
 
@@ -168,12 +166,6 @@ class Test:
                 self._agent.rand_guess()
             elif style == 1:
                 self._agent.prob_guess()
-
-            # Adding in board print
-            # self._agent.print_kboard()
-            # print()
-            # self._agent.print_pboard()
-            # print()
 
         else:
             return self._agent.get_count()
@@ -250,9 +242,9 @@ class Test:
 
         return new_list
 
-    def diversity(self, gene_set, mini, maxi):
+    def variation(self, gene_set, mini, maxi):
         """
-        Calculates the diversity of a given set of gene sequences.
+        Calculates the variation of a given set of gene sequences.
 
         :param gene_set:
         :param mini:
@@ -295,20 +287,20 @@ class Test:
         if new_set is not None:
             self.append_file(new_set, outfile)
 
-    def do_mutate(self, boards, infile, outfile, min=-10, max=10, select=100):
+    def do_mutate(self, boards, infile, outfile, select=100, generations=50, change=2, mini=-10, maxi=10):
 
-        best = self.get_file(infile)
+        best = self.get_json(infile)
         best.sort()
 
         new_set = []
         for i in range(select):
             self._agent.set_genes(best[i][2])
-            current = self.mutate_generations(boards, min, max)
+            current = self.mutate_generations(boards, mini, maxi, change, generations)
             new_set.append(current)
 
-            print(i, current)
+            print("Gene {} of {}: ".format(i + 1, select), current)
 
-            if i % 19 == 0:
+            if i % 10 == 0:
                 self.append_file(new_set, outfile)
                 new_set = []
 

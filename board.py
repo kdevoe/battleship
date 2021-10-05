@@ -18,7 +18,7 @@ class Board:
 
     def __init__(self, shipList, size=10):
         """
-        Initializes a battlehip board based on input shipList and desired size.
+        Initializes a battleship board based on input shipList and desired size.
         :param shipList: List of battleships to place. List is a tuple of integer value for length of ship followed by
                 the string to represent the ship with i.e. (5, "Ba") Represents a length 5 "Ba" ship.
         :param size: Size of the board n x n. Defaults to 10 x 10.
