@@ -90,8 +90,8 @@ class Agent:
         :param col: Column of guess
         :return: Value of the board at the guess location
         """
-        self._count += 1  # Increment the counter for guesses made by the agent
-        self._guessed.append((row, col))  # Add guessed cell to locations guessed by agent
+        self._count += 1                            # Increment the counter for guesses made by the agent
+        self._guessed.append((row, col))            # Add guessed cell to locations guessed by agent
         current = self._board.get_square(row, col)  # Get the value at the guessed cell
 
         # Case for a miss
@@ -121,12 +121,17 @@ class Agent:
         return self.guess(row, col)
 
     def prob_guess(self):
+        """
+        Analyzes the agents internal gameboard of probability for each cell being a hit and sorts in order of the most
+        likely cells to have a hit. Selects the first available cell from teh this list and returns its coordinates
+        :return: Integer x,y coordinates for highest probability cell
+        """
 
+        # Make a sorted list of cells in descending order of probability of a hit
         prob_list = []
         for row in range(self._size):
             for col in range(self._size):
                 prob_list.append((self._probBoard[row][col], row, col))
-
         prob_list.sort(reverse=True)
 
         # Iterate through the probability list until an location that hasn't been guessed is selected
@@ -134,6 +139,7 @@ class Agent:
         while (prob_list[cur][1], prob_list[cur][2]) in self._guessed:
             cur += 1
 
+        # Return location of most likely cell to have a hit
         return self.guess(prob_list[cur][1], prob_list[cur][2])
 
     def reset(self):
@@ -157,9 +163,9 @@ class Agent:
         """
         Updates the probability board given the information in the known board.
         Note: This is the most expensive part of the program, operating in O(N^3) time.
-        :return:
+        :return: None. Agents probability board is updated.
         """
-        self.wipe_board(self._probBoard, 0)
+        self.wipe_board(self._probBoard, 0)     # Reset the agents probability board to all 0's
 
         # Array for movement (Up, Up Right, Right, Down Right, Down, Down Left, Left, Up Left)
         dir_array = [(-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1)]
@@ -185,22 +191,47 @@ class Agent:
                         sel_col += dir_array[dir][1]
 
     def wipe_board(self, board, value):
+        """
+        Resets the input board (probability or known board) to the input value for each cell.
+        :param board: Board to update (usually pboard or kboard)
+        :param value: Value to set all cells to, usually 0
+        :return: None
+        """
         # Guard for if board is empty, will do nothing
         if len(board) == 0:
             return
 
+        # Set each cell of the board to the provided value
         for i in range(len(board)):
             for j in range(len(board[0])):
                 board[i][j] = value
 
     def calc_fade(self, distance, initial, fade):
+        """
+        Implements the mathematical calculation for probability fade with distance from an initial cell. Formula used
+        is discussed in detail in the methods section of the project paper.
+        :param distance: Distance from start cell to cell being calculated.
+        :param initial: Initial value for start cell.
+        :param fade: Degree to which the probability fades.
+        :return: Calculation for probability to add to current cell
+        """
+
+        # Return value based on formula for calculating probability fade
         return initial * (1 / distance**(fade/5))
 
     def print_kboard(self):
+        """
+        Prints the agents known board to the console.
+        :return: None
+        """
         for row in self._knownBoard:
             print(row)
 
     def print_pboard(self):
+        """
+        Prints the agents calculated probability board to the console.
+        :return: None
+        """
         for row in self._probBoard:
             print([round(x) for x in row])
 
