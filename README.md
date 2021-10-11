@@ -7,7 +7,7 @@ Main report for this project. Contains the details of tests performed and result
 
 ## Code used to build the project:
 
-All code was built using Python 3.7. Only the standard library was used so no 
+All code was built using Python 3.8. Only the standard library was used so no 
 additional library installations are required.
 
 ### [example.py](/example.py) (How to use project code)
