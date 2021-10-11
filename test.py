@@ -1,7 +1,8 @@
 # Author: Ken DeVoe
 # Date: 10/1/2021
 # Description: Class used to implement memetic algorithm and perform testing on performance as well as store and analyze
-#               results.
+#               results. Most commonly used functions are run_set and do_mutate. run_set performs testing on a given
+#               set of genes. do_mutate performs mutations on a given set of genes.
 
 
 from random import seed, randint
@@ -17,6 +18,11 @@ class Test:
     """
 
     def __init__(self, agent, board):
+        """
+        Initializes test class based on agent and board to perform testing on.
+        :param agent: Object of agent class to play on board.
+        :param board: Object of board class to represent a battleship.
+        """
         self._board = board
         self._agent = agent
         self._gLength = self._agent.get_glength()   # Set the length of gene sequence (typically 16 digits)
@@ -193,55 +199,6 @@ class Test:
 
         return [self.stats(counts), counts, self._agent.get_genes()]
 
-    def cross_genes(self, gene_list, divisions=4):
-        """
-        Generates a list of new genes by mixing individual divisions of each of the genes in the gene_list. For example
-        a newly generated gene may consist of 4 parts each from a separate original gene.
-        :param gene_list: List of genes to perform cross splicing on.
-        :param divisions: Number of divisions to make within a single genetic sequence during splicing.
-        :return:
-        """
-
-        new_list = [gene_list[0]]  # Make a new list and add first original gene to it
-
-        gene_len = len(gene_list[0])
-
-        offset = gene_len // divisions
-
-        sequence = [0] * divisions  # list of gene to take from for each section
-
-        # Run through each permutation of values for possible gene combinations
-        end = False
-
-        while not end:
-            incremented = False
-            index = 0
-
-            while not incremented:
-
-                # If current index has reached its maximum value then carry over to next index
-                if sequence[index] == len(gene_list) - 1:
-                    sequence[index] = 0
-                    index += 1
-
-                    # If out of indexes to increment then maximum permutation reached, end loops
-                    if index >= divisions:
-                        incremented = True
-                        end = True
-
-                # Otherwise simply add 1 to the current index and add this new permutation to the new_list
-                else:
-                    sequence[index] = sequence[index] + 1
-                    incremented = True
-
-                    # Make and add new gene to the new_list
-                    new_gene = []
-                    for section in range(divisions):
-                        new_gene += gene_list[sequence[section]][section*offset:section*offset + offset]
-                    new_list.append(new_gene.copy())
-
-        return new_list
-
     def variation(self, gene_set, mini, maxi):
         """
         Calculates the variation of a given set of gene sequences. The project paper describes the calculation of
@@ -249,7 +206,7 @@ class Test:
         :param gene_set:
         :param mini:
         :param maxi:
-        :return:
+        :return: Calculated variation between input genes
         """
 
         length = len(gene_set[0])
@@ -264,34 +221,22 @@ class Test:
 
         return (np.mean(stdev_gene) / (maxi - mini)) * 2
 
-    def do_cross(self, boards, infile, outfile, select=8, divisions=4):
-        best = self.get_file(infile)
-        best.sort()
-
-        seed_genes = best[0:select]
-        # Temporary mod for test
-        #for i in range(select):
-        #    seed_genes.append(best[i][2])
-
-        new_genes = self.cross_genes(seed_genes, divisions)
-
-        new_set = []
-        for i in range(len(new_genes)):
-            self.run_set(boards, new_set, new_genes[i])
-
-            if i % 19 == 0:
-                self.append_file(new_set, outfile)
-                new_set = []
-                print((i / len(new_genes)) * 100, "% complete")
-
-        if new_set is not None:
-            self.append_file(new_set, outfile)
-
     def write_json(self, item, filename):
+        """
+        Writes an input list into a json file.
+        :param item: Input data in list form.
+        :param filename: Name of file to write to.
+        :return: None. File is written
+        """
         with open(filename, 'w') as outfile:
             json.dump(item, outfile)
 
     def get_json(self, filename):
+        """
+        Writes a list from a given json file.
+        :param filename: Name of json file to read from.
+        :return: List with contents from json file
+        """
         with open(filename, 'r') as infile:
             item = json.load(infile)
 
@@ -316,12 +261,15 @@ class Test:
             with open(filename, 'w') as outfile:
                 json.dump([], outfile)
 
+        # Open the json file and load contents to values
         with open(filename, 'r') as infile:
             values = json.load(infile)
 
+        # Append new data to values
         for line in item:
             values.append(line)
 
+        # Write new contents back to outfile
         with open(filename, 'w') as outfile:
             json.dump(values, outfile)
 
@@ -332,4 +280,9 @@ class Test:
                 writer.writerow(line)
 
     def stats(self, values):
+        """
+        Gives a statistical summary of input list of numerical values.
+        :param values: List of numerical values.
+        :return: Average, Standard Deviation, Minimum and Maximum of input values in list form
+        """
         return [np.mean(values).item(), np.std(values).item(), np.min(values).item(), np.max(values).item()]
