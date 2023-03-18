@@ -1,7 +1,7 @@
 # Memetic Algorithms for Battleship
 A project to investigate the use of memetic algorithms for playing the board game Battleship. 
 
-## [Project Paper](/Memetic_Battleship_KD.pdf)
+## [Main Report](/Memetic_Battleship_KD.pdf)
 
 Main report for this project. Contains the details of tests performed and results.
 
