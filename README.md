@@ -1,5 +1,5 @@
 # Memetic Algorithms for Battleship
-A project to investigate the use of memetic algorithms for playing the board game Battleship. 
+A project to investigate the use of memetic algorithms for playing the board game Battleship. This project is unique as it does not use neural networks or any frameworks, all environments and agents are built directly from Python.
 
 Battleship is a game where uses attempt to guess the location of hidden ships. The lower the number of guesses to find all ships the better.
 
@@ -9,7 +9,7 @@ A search heuristic is used to calculate the probability a hidden cell contains a
 
 <img width="541" alt="Screenshot 2024-01-10 at 6 16 17 PM" src="https://github.com/kdevoe/battleship/assets/31428365/970f4210-fdf5-46c7-8a5b-094caf69006b">
 
-The search algorithm contains 16 parameters, or "genetic markers", which are optimized using an evolution based algorithm, including initial population seeding and mutation over a defined amount of generations.
+The search algorithm contains 16 parameters, or "genetic markers", which are optimized using an evolution based algorithm. Optimization techniques include initial population seed size, defining how much change to allow during mutation and how many generations in total to run.
 
 <img width="583" alt="Screenshot 2024-01-10 at 6 17 49 PM" src="https://github.com/kdevoe/battleship/assets/31428365/4929685d-fbba-46d2-8eee-32c079715f64">
 
