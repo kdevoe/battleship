@@ -1,6 +1,21 @@
 # Memetic Algorithms for Battleship
 A project to investigate the use of memetic algorithms for playing the board game Battleship. 
 
+Battleship is a game where uses attempt to guess the location of hidden ships. The lower the number of guesses to find all ships the better.
+
+<img width="610" alt="Screenshot 2024-01-10 at 6 12 21 PM" src="https://github.com/kdevoe/battleship/assets/31428365/16a7ab50-c905-4f9b-9a67-c8d291458623">
+
+A search heuristic is used to calculate the probability a hidden cell contains a ship. 
+
+<img width="541" alt="Screenshot 2024-01-10 at 6 16 17 PM" src="https://github.com/kdevoe/battleship/assets/31428365/970f4210-fdf5-46c7-8a5b-094caf69006b">
+
+The search algorithm contains 16 parameters, or "genetic markers", which are optimized using an evolution based algorithm, including initial population seeding and mutation over a defined amount of generations.
+
+<img width="583" alt="Screenshot 2024-01-10 at 6 17 49 PM" src="https://github.com/kdevoe/battleship/assets/31428365/4929685d-fbba-46d2-8eee-32c079715f64">
+
+<img width="690" alt="Screenshot 2024-01-10 at 6 18 34 PM" src="https://github.com/kdevoe/battleship/assets/31428365/03989724-f383-4229-beb5-50d7b21fdb8a">
+
+
 ## [Main Report](/Memetic_Battleship_KD.pdf)
 
 Main report for this project. Contains the details of tests performed and results.
