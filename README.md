@@ -1,7 +1,7 @@
 # Memetic Algorithms for Battleship
-A project to investigate the use of memetic algorithms for playing the board game Battleship. This project is unique as it does not use neural networks or any frameworks, all environments and agents are built directly from Python.
+Investigation of the use of memetic algorithms for playing the board game Battleship. This project is unique as it does not utilize neural networks or any frameworks, all environments and agents are built directly from Python.
 
-Battleship is a game where uses attempt to guess the location of hidden ships. The lower the number of guesses to find all ships the better.
+Battleship is a game where users attempt to guess the location of hidden ships. The lower the number of guesses to find all ships the better.
 
 <img width="610" alt="Screenshot 2024-01-10 at 6 12 21 PM" src="https://github.com/kdevoe/battleship/assets/31428365/16a7ab50-c905-4f9b-9a67-c8d291458623">
 
